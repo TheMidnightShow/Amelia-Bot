@@ -6,10 +6,10 @@ client.commands = new Collection();
 
 const commandFiles = fs.readdirSync("./Commands/").filter(file => file.endsWith(".js"));
 
-for(let file of commandFiles) 
+commandFiles.map(item => 
 {
-  const command = require(`../Commands/${file}`);
+  const command = require(`../Commands/${item}`)
   client.commands.set(command.name, command);
-}
+})
 
 exports.commands = client.commands;
