@@ -1,17 +1,19 @@
+//######################################//
+//                Index                 //
+//######################################//
 
 const { prefix, token } = require("./conf.json");
 const { client }= require("./MeiModules/CreateClient.js")
-const { commands } = require("./MeiModules/Commands.js")
-const { handler } = require("./MeiModules/Handler.js")
+const { Handler } = require("./MeiModules/Handler.js")
 
-client.once("ready", () => 
+client.on("ready", () => 
 { 
   console.log("Mei is ready!"); 
 });
 
 client.on("messageCreate", async message => 
 {
-  handler(message)
+  new Handler(message);
 });
 
 client.login(token);

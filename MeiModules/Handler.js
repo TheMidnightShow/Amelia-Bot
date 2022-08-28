@@ -1,15 +1,24 @@
 const { prefix } = require("../conf.json")
 const { commands } = require("./Commands.js")
+const { client } = require("./CreateClient.js")
 
-handler = (msg) => {
-  console.log(`${msg.author.username} : ${msg.content}`);
-  if(!msg.content.startsWith(prefix) || msg.author.bot) return
+class Handler 
+{
+  constructor(msg) 
+  {
 
-  let args = msg.content.slice(prefix.length).split(/ +/);
-  let command = args.shift().toLowerCase();
-  let commandExist = commands.get(command);
+    this.bot = msg.bot;
+    this.channel = msg.channel;
+    this.message = msg.content;
+    this.author = msg.author.username;
+    this.args = msg.content.slice(prefix.length).split(/ +/);
+    this.command = this.args.shift().toLowerCase();
 
-  commandExist ? commandExist.execute(msg, args) : 0;
+    console.log(`\n${this.author} :\n==>  ${this.message}`)
+    
+    commands.get(this.command) ? commands.get(this.command).execute(this) : 0;
+
+  }
 }
 
-exports.handler = handler;
+exports.Handler = Handler;
