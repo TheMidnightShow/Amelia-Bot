@@ -1,5 +1,6 @@
 # configuration file
 conf.json
+package-lock.json
 
 # node modules
 node_modules/
