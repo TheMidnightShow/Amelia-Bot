@@ -1,88 +1,35 @@
+/* imports */
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { amelia_token } = require('../conf.json');
-
+const { token } = require('../conf.json');
 const { Collection } = require("discord.js");
-const { client } = require("./client.js");
+const { readdirSync } = require("fs");
 
-const fs = require("fs");
+/* global variables */
+const rest          = new REST({ version: '10' }).setToken(token); // where to post client commands
+const commands      = new Collection();                            // record for command usage localy
 
-// scommands: s as in slash 
-function 
-fetch_scommands()
+const commandDir   = readdirSync("./src/commands");                   // commands location
+const id           = "864291612334096394";
+const restCommands = [];
+
+/* functions */
+const fetchCommands = () => 
+  commandDir.map(item => 
+    commands.set(require(`../src/commands/${item}/${item}.js`).name, require(`../src/commands/${item}/${item}.js`)))
+
+const reloadCommands = () =>
+  rest.put(Routes.applicationCommands(id), { body: restCommands })
+
+const loadCommands = () =>
+  commandDir.map(item => 
+    restCommands.push(require(`./commands/${item}/${item}.js`).data.toJSON()))
+
+/* exports */
+module.exports = 
 {
-  //  set a new collection and get command dir
-  const scommands = new Collection();
-  const scommandFiles = fs.readdirSync("./src/slash");
-
-  scommandFiles.map(item => {
-    const command = require(`../src/slash/${item}/${item}.js`);
-    scommands.set(command.name, command);
-  });
-
-  return scommands;
+  fetchCommands,
+  reloadCommands,
+  loadCommands,
+  commands,
 }
-
-async function 
-reloadCommands(commands)
-{
-  const rest = new REST({ version: '9' }).setToken(amelia_token);
-
-  try 
-  {
-    console.info("[INFO] : refresing app slash commands");
-
-    await rest.put(
-      Routes.applicationCommands("864291612334096394"),
-      { body: commands },
-    );
-
-    console.info("[INFO] : slash commands ready");
-  }
-  catch (err)
-  {
-    console.info("[ERROR] : slash reset failed");
-  }
-} 
-
-function slash_commands()
-{
-  const commands = [];
-  const commandFiles = fs.readdirSync('./src/slash/');
-
-  commandFiles.map(item => 
-  {
-    const command = require(`./slash/${item}/${item}.js`); 
-    commands.push(command.data.toJSON());
-  })
-
-  reloadCommands(commands);
-}
-
-function 
-slash_handler(interaction)
-{ 
-  const rep = 
-  {
-    title: `Failed to run \'${interaction.commandName}\'`,
-    color: 0xebdbb2,
-    footer: 
-    {
-      text: 'Perhaps this command may not exist'
-    }
-  }
-
-  const slash = client.commands.get(interaction.commandName || interaction.message.interaction.commandName);
-  slash ? slash.main(interaction) : interaction.reply({ embeds: [rep], ephemeral: true });
-  
-}
-
-function 
-message_processor(message)
-{ 
-}
-
-exports.fetch_scommands   = fetch_scommands;
-exports.slash_commands    = slash_commands;
-exports.slash_handler     = slash_handler;
-exports.message_processor = message_processor;

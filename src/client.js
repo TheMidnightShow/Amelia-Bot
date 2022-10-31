@@ -1,21 +1,20 @@
 const { Client, GatewayIntentBits } = require("discord.js");
 
-function 
-createClient() 
+const intents = 
+[
+  GatewayIntentBits.Guilds, 
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.GuildMembers,
+  GatewayIntentBits.MessageContent,     
+  GatewayIntentBits.GuildVoiceStates,
+];
+
+const createClient = (intents) =>
+  new Client({ intents })
+
+const client = createClient(intents)
+
+module.exports = 
 {
-  const dClient = new Client({
-    intents: [
-      GatewayIntentBits.Guilds, 
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.GuildMembers,
-      GatewayIntentBits.MessageContent,     
-      GatewayIntentBits.GuildVoiceStates,     
-    ]
-  })
-
-  return dClient;
+  client,
 }
-
-const client = createClient();
-
-exports.client = client;
