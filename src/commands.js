@@ -1,7 +1,7 @@
 /* imports */
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { token } = require('../conf.json');
+const { token, id } = require('../conf.json');
 const { Collection } = require("discord.js");
 const { readdirSync } = require("fs");
 
@@ -9,8 +9,7 @@ const { readdirSync } = require("fs");
 const rest          = new REST({ version: '10' }).setToken(token); // where to post client commands
 const commands      = new Collection();                            // record for command usage localy
 
-const commandDir   = readdirSync("./src/commands");                   // commands location
-const id           = "864291612334096394";
+const commandDir   = readdirSync("./src/commands");                // commands location
 const restCommands = [];
 
 /* functions */
